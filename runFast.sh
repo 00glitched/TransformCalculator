@@ -1,2 +1,2 @@
-octave --no-gui --no-window-system LapTrans.m
+octave --no-gui --no-window-system --silent LapTrans.m
 
