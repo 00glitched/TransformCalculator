@@ -12,8 +12,9 @@ while(cont==1)
     disp("t : f(t) -> F(s) # Laplace transform");
     disp("s : F(s) -> f(t) # inverse Laplace");
     disp("c : f(t) *  g(t) # convolution");
+    disp("e : y+...=f(t)   # EDO solver");
     disp("h :              # examples");
-    disp("e :              # exit");
+    disp("q :              # quit");
     opt = input("\nSelect: ", "s");
     if(opt == "t")
         # u[n]  ->  heaviside(t-n)  and   f(t-n)
@@ -57,6 +58,35 @@ while(cont==1)
         disp ("g(t):");disp(latex(g));disp("");
         disp ("f*g:");disp(latex(fg));disp("");
     end
+    if (opt == "e")
+        disp ("\n\nk(1)*y+...+k(n)*y^[n] = f(t) :\n");
+        f = sym (input ("\nf(t) = ", "s"));
+        m = floor (str2num (input ("\nn = ", "s")));
+        FY0 = sym (0);
+        FK = sym (0);
+        for cnt=1:m
+            printf("\nk(%i) = ",cont);
+            k(cnt)= str2num (input ("","s"));
+        end
+        for cnt=1:m-1
+            printf("\ny^[%i](0) = ",cont);
+            y(cnt)= str2num (input ("","s"));
+        end
+        for cnt=1:m
+            Ps = sym (0);
+            for cnti=1:cnt-1
+                Ps += y(cnti) * s^(cnti-1);
+            end
+            FY0 += k(cnt) * Ps;         # L{y0} poly
+            FK  += k(cnt) * s^(cnt-1);  # L{y} poly
+        end
+        FS=laplace(f);
+        disp ("\nF(s) =\n"); pretty (FS, "ascii");
+        disp ("\nFy0(s) =\n"); pretty (FY0, "ascii");
+        disp ("\nFk(s) =\n"); pretty (FK, "ascii");
+        yt = ilaplace((FS+FY0)/FK);
+        disp ("\ny(t) =\n"); pretty (yt, "ascii");
+    end
     if(opt=="h")
         disp("\n\nTransform properties:") ########TO-DO <-----
         disp("TO-DO")
@@ -87,7 +117,7 @@ while(cont==1)
         f=sinh(n*t)
         F=laplace (f,t,s)
     end
-    if(opt=="e")
+    if(opt=="q")
         cont = 0;disp ("\n\n\Bye! :D\n");exit;
     end
 end
